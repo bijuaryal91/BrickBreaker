@@ -110,6 +110,28 @@ const powerUpWidth = 20;
 const powerUpHeight = 20;
 const powerUpFallSpeed = 2;
 
+// Event listeners for controls
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+
+// Function to handle keydown
+function keyDownHandler(e) {
+  if (e.key === "Right" || e.key === "ArrowRight") {
+    rightPressed = true;
+  } else if (e.key === "left" || e.key === "ArrowLeft") {
+    leftPressed = true;
+  }
+}
+
+// function to handle keyup
+function keyUpHandler(e) {
+  if (e.key === "Right" || e.key === "ArrowRight") {
+    rightPressed = false;
+  } else if (e.key === "left" || e.key === "ArrowLeft") {
+    leftPressed = false;
+  }
+}
+
 // Function for collision detection
 function collisionDetection() {
   for (let c = 0; c < brickColumnCount; c++) {
@@ -129,7 +151,7 @@ function collisionDetection() {
             score++;
 
             // Randomly drop a power-up
-            if (Math.random() < 0.1) {
+            if (Math.random() < 0.2) {
               dropPowerUp(b.x + brickWidth / 2, b.y + brickHeight);
             }
 
@@ -225,6 +247,7 @@ function draw() {
   balls.forEach(drawBall);
   drawPaddle();
   drawPowerUps();
+  collisionDetection();
   collectPowerUps();
 
   // Ball Movement

@@ -103,6 +103,12 @@ function drawBricks() {
     }
   }
 }
+// Powerups properties
+let powerUps = [];
+const powerUpTypes = ["life", "paddle", "extraBall", "tripleBall"];
+const powerUpWidth = 20;
+const powerUpHeight = 20;
+const powerUpFallSpeed = 2;
 
 // Function for collision detection
 function collisionDetection() {
@@ -122,16 +128,18 @@ function collisionDetection() {
             b.status = 0; // Mark brick as broken
             score++;
 
-            // Todo: Randomly drop a power-up
+            // Randomly drop a power-up
+            if (Math.random() < 0.1) {
+              dropPowerUp(b.x + brickWidth / 2, b.y + brickHeight);
+            }
 
             // check if all bricks are broken
             const allBricksBroken = bricks.every((column) => {
               column.every((brick) => (brick.status = 0));
             });
-            if(allBricksBroken)
-            {
-                alert("YOU WIN! CONGRATULATIONS!");
-                document.location.reload();
+            if (allBricksBroken) {
+              alert("YOU WIN! CONGRATULATIONS!");
+              document.location.reload();
             }
           }
         });
@@ -140,12 +148,84 @@ function collisionDetection() {
   }
 }
 
+// function to drop PowerUp
+function dropPowerUp(x, y) {
+  const type = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
+  powerUps.push({ x: x, y: y, type: type });
+}
+
+// Function to draw powerups
+function drawPowerUps() {
+  powerUps.forEach((powerUp, index) => {
+    ctx.font = "20px Arial";
+    ctx.fillStyle =
+      powerUp.type === "life"
+        ? "green"
+        : powerUp.type === "paddle"
+        ? "blue"
+        : powerUp.type === "extraBall"
+        ? "orange"
+        : "purple"; // For tripleBall;
+
+    ctx.fillText(
+      powerUp.type === "life"
+        ? "❤️"
+        : powerUp.type === "paddle"
+        ? "🛶"
+        : powerUp.type === "extraBall"
+        ? "⚽"
+        : "X3",
+      powerUp.x,
+      powerUp.y
+    );
+
+    // Move the power-up down
+    powerUp.y += powerUpFallSpeed;
+
+    // remove power-up if it falls below the canvas
+    if (powerUp.y > canvas.height) {
+      powerUps.splice(index, 1);
+    }
+  });
+}
+
+// Function to collect power-ups
+function collectPowerUps() {
+  powerUps.forEach((powerUp, index) => {
+    if (
+      powerUp.x < paddleX + paddleWidth &&
+      powerUp.x + powerUp.width > paddleX &&
+      powerUp.y + powerUpHeight > canvas.height - paddleHeight
+    ) {
+      // Collect the powerup
+      if (powerUp.type === "life") {
+        lives++;
+      } else if (powerUp.type === "paddle") {
+        paddleWidth += 30; //Increase paddle size by 30 px
+        setTimeout(() => {
+          paddleWidth -= 30; //Reset paddle size after 5 second
+        }, 5000);
+      } else if (powerUp.type === "extraBall") {
+        // Add extra ball
+        balls.push({ x: balls[0].x, y: balls[0].y, dx: 4, dy: -4 });
+      } else if (powerUp.type === "tripleBall") {
+        //Add two extra balls for triple ball powerup
+        balls.push({ x: balls[0].x, y: balls[0].y, dx: 4, dy: -4 });
+        balls.push({ x: balls[0].x, y: balls[0].y, dx: -4, dy: -4 });
+      }
+      powerUps.splice(index, 1); // Remove the collected powerup
+    }
+  });
+}
+
 // Gameloop
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBricks();
   balls.forEach(drawBall);
   drawPaddle();
+  drawPowerUps();
+  collectPowerUps();
 
   // Calls the draw function recursively
 }

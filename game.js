@@ -156,12 +156,14 @@ function collisionDetection() {
             }
 
             // check if all bricks are broken
-            const allBricksBroken = bricks.every((column) => {
-              column.every((brick) => (brick.status = 0));
-            });
+            const allBricksBroken = bricks.every((column) =>
+              column.every((brick) => brick.status === 0)
+            );
             if (allBricksBroken) {
-              alert("YOU WIN! CONGRATULATIONS!");
-              document.location.reload();
+              setTimeout(() => {
+                alert("YOU WIN! CONGRATULATIONS!");
+                document.location.reload();
+              }, 300);
             }
           }
         });
@@ -216,7 +218,7 @@ function collectPowerUps() {
   powerUps.forEach((powerUp, index) => {
     if (
       powerUp.x < paddleX + paddleWidth &&
-      powerUp.x + powerUp.width > paddleX &&
+      powerUp.x + powerUpWidth > paddleX &&
       powerUp.y + powerUpHeight > canvas.height - paddleHeight
     ) {
       // Collect the powerup

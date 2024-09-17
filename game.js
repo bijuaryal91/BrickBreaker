@@ -23,18 +23,47 @@ let paddleSpeed = 10; //Speed of the paddle
 
 // Function to draw Paddle
 function drawPaddle() {
+  let gradient = ctx.createLinearGradient(
+    paddleX,
+    canvas.height - paddleHeight,
+    paddleX + paddleWidth,
+    canvas.height
+  );
+  gradient.addColorStop(0, "#1E90FF");
+  gradient.addColorStop(1, "#00BFFF");
   ctx.beginPath();
   ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
-  ctx.fillStyle = "#0095DD";
+  ctx.fillStyle = gradient;
   ctx.fill();
   ctx.closePath();
 }
 
 // Function to draw balls
-function drawBall() {
+function drawBall(ball) {
+  let gradient = ctx.createRadialGradient(
+    ball.x,
+    ball.y,
+    5,
+    ball.x,
+    ball.y,
+    ballRadius
+  );
+  gradient.addColorStop(0, "#FF5733");
+  gradient.addColorStop(1, "#C70039");
   ctx.beginPath();
-  ctx.arc(balls[0].x, balls[0].y, ballRadius, 0, Math.PI * 2);
-  ctx.fillStyle = "#0095DD";
+  ctx.arc(ball.x, ball.y, ballRadius, 0, Math.PI * 2);
+  ctx.fillStyle = gradient;
   ctx.fill();
   ctx.closePath();
 }
+
+// Gameloop
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  balls.forEach(drawBall);
+  drawPaddle();
+
+  // Calls the draw function recursively
+}
+
+draw();

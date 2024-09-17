@@ -227,7 +227,71 @@ function draw() {
   drawPowerUps();
   collectPowerUps();
 
+  // Ball Movement
+  balls.forEach((ball, ballIndex) => {
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    // Ball Wall Collsion Detection
+    if (
+      ball.x + ball.dx > canvas.width - ballRadius ||
+      ball.x + ball.dx < ballRadius
+    ) {
+      ball.dx = -ball.dx;
+    }
+    if (ball.y + ball.dy < ballRadius) {
+      ball.dy = -ball.dy;
+    } else if (ball.y + ball.dy > canvas.height - ballRadius) {
+      // paddle collision detection
+      if (
+        ball.x > paddleX - ballRadius &&
+        ball.x < paddleX + paddleWidth + ballRadius
+      ) {
+        // Calculate the hit position on the paddle
+        let hitPosition = (ball.x - paddleX) / paddleWidth; // Value between 0 and 1
+        let angle = ((hitPosition - 0.5) * Math.PI) / 6; // Adjust the angle range
+
+        // Update the ball's direction based on the hit position
+        ball.dx =
+          4 * Math.sin(angle) +
+          (rightPressed ? paddleSpeed : leftPressed ? -paddleSpeed : 0);
+        ball.dy = -Math.abs(4 * Math.cos(angle)); // Ensure the ball goes upward
+
+        // Limit the ball's speed
+        const speed = Math.sqrt(ball.dx * ball.dx + ball.dy + ball.dy);
+        if (speed > maxBallSpeed) {
+          ball.dx = (ball.dx / speed) * maxBallSpeed;
+          ball.dy = (ball.dy / speed) * maxBallSpeed;
+        }
+      } else {
+        // Remove the ball if it goes below the canvas
+        balls.splice(ballIndex, 1);
+        if (balls.length === 0) {
+          lives--; //Decrease lives if all balls are lost
+          if (lives === 0) {
+            alert("GAME OVER!");
+            document.location.reload();
+          } else {
+            // Reset the first ball
+            balls = [
+              { x: canvas.width / 2, y: canvas.height - 30, dx: 4, dy: -4 },
+            ];
+            paddleX = (canvas.width - paddleWidth) / 2;
+          }
+        }
+      }
+    }
+  });
+
+  // Paddle Movement
+  if (rightPressed && paddleX < canvas.width - paddleWidth) {
+    paddleX += paddleSpeed;
+  } else if (leftPressed && paddleX > 0) {
+    paddleX -= paddleSpeed;
+  }
+
   // Calls the draw function recursively
+  requestAnimationFrame(draw);
 }
 
 draw();

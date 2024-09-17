@@ -240,6 +240,19 @@ function collectPowerUps() {
   });
 }
 
+// function to draw scores
+function drawScores() {
+  ctx.font = "40px Cabin Sketch";
+  ctx.fillStyle = "#fff";
+  ctx.fillText("Score: " + score, 8, 40);
+}
+
+// Function to draw lives
+function drawLives() {
+  ctx.font = "40px Cabin Sketch";
+  ctx.fillStyle = "#fff";
+  ctx.fillText("Lives: " + lives, canvas.width - 185, 40);
+}
 // Gameloop
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -247,6 +260,8 @@ function draw() {
   balls.forEach(drawBall);
   drawPaddle();
   drawPowerUps();
+  drawScores();
+  drawLives();
   collisionDetection();
   collectPowerUps();
 

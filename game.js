@@ -151,7 +151,7 @@ function collisionDetection() {
             score++;
 
             // Randomly drop a power-up
-            if (Math.random() < 0.2) {
+            if (Math.random() < 0.1) {
               dropPowerUp(b.x + brickWidth / 2, b.y + brickHeight);
             }
 
@@ -224,18 +224,22 @@ function collectPowerUps() {
       // Collect the powerup
       if (powerUp.type === "life") {
         lives++;
+        score+=10;
       } else if (powerUp.type === "paddle") {
         paddleWidth += 30; //Increase paddle size by 30 px
+        score+=10;
         setTimeout(() => {
           paddleWidth -= 30; //Reset paddle size after 5 second
         }, 5000);
       } else if (powerUp.type === "extraBall") {
         // Add extra ball
         balls.push({ x: balls[0].x, y: balls[0].y, dx: 4, dy: -4 });
+        score+=10;
       } else if (powerUp.type === "tripleBall") {
         //Add two extra balls for triple ball powerup
         balls.push({ x: balls[0].x, y: balls[0].y, dx: 4, dy: -4 });
         balls.push({ x: balls[0].x, y: balls[0].y, dx: -4, dy: -4 });
+        score+=30;
       }
       powerUps.splice(index, 1); // Remove the collected powerup
     }

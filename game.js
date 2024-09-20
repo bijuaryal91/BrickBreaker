@@ -152,7 +152,7 @@ function collisionDetection() {
 
             // Randomly drop a power-up
             // 1 means 100% probability
-            if (Math.random() < 1) {
+            if (Math.random() < 0.2) {
               dropPowerUp(b.x + brickWidth / 2, b.y + brickHeight);
             }
 
